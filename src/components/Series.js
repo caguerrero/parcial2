@@ -1,21 +1,44 @@
 import { useEffect, useState } from "react";
-import {Table} from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
-const Series = () =>{
-    const [series, setSeries] = useState();
-    useEffect(()=>{
+const Series = () => {
+    const [series, setSeries] = useState([]);
+    useEffect(() => {
         fetch("https://gist.githubusercontent.com/josejbocanegra/c55d86de9e0dae79e3308d95e78f997f/raw/a467415350e87c13faf9c8e843ea2fd20df056f3/series-es.json")
             .then(result => result.json())
-            .then((result)=>{
-                Object.keys(result).forEach((key)=>{
-                    setSeries({...series, id:result.id, name:result.name, channel:result.channel, seasons:result.seasons, episodes:result.episodes, release:result.release})
+            .then((result) => {
+                Object.keys(result).forEach((key) => {
+                    setSeries(series => [...series, result[key]])
                 })
             })
     }, []);
 
-    return(
+    return (
         <>
-            <h1>Hola mundo</h1>
+            <Table bordered striped hover>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Channel</th>
+                        <th>Seasons</th>
+                        <th>Episodes</th>
+                        <th>Release Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {series.map((item) => (
+                        <tr>
+                            <td>{item.id}</td>
+                            <td>{item.name}</td>
+                            <td>{item.channel}</td>
+                            <td>{item.seasons}</td>
+                            <td>{item.episodes}</td>
+                            <td>{item.release}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </>
     )
 
