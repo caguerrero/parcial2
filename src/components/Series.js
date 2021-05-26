@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Table } from 'react-bootstrap';
-import { Card } from 'react-bootstrap';
+import Serie from "./Serie";
 
 const Series = () => {
     const [series, setSeries] = useState([]);
@@ -80,17 +80,7 @@ const Series = () => {
             </Table>
             {
                 series.map((item) => (
-                    state[item.id] && (<Card style={{ width: "30rem" }}>
-                        {item.poster!=="Error while loading image." && <Card.Img variant="top" src={item.poster}/>}
-                        {item.poster==="Error while loading image." && <Card.Text> {item.poster} </Card.Text>}
-                        <Card.Body>
-                            <Card.Title>{item.name}</Card.Title>
-                            <Card.Text>
-                                {item.description}
-                            </Card.Text>
-                            <Card.Link href={item.webpage}>{item.webpage}</Card.Link>
-                        </Card.Body>
-                    </Card>)
+                    state[item.id] && <Serie key={item.id} it = {item}/>
                 ))
             }
         </>
