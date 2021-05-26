@@ -1,8 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
-import Serie from "./Serie";
+import Serie from './Serie';
+import { FormattedDate, FormattedNumber, FormattedMessage } from 'react-intl';
 
-const Series = () => {
+function convert(date) {
+    let datearray = date.split("/");
+    let newdate = datearray[1] + '/' + datearray[0] + '/' + datearray[2];
+    return newdate;
+}
+
+const Series = (props) => {
     const [series, setSeries] = useState([]);
 
     const [state, setState] = useState([]);
@@ -34,20 +41,20 @@ const Series = () => {
             if (arrSeries.length < 0) {
                 arrSeries.push({ id: 0, name: "Error while loading", channel: "Error while loading", seasons: 0, episodes: 0, release: "0/0/0", description: "Error while loading", webpage: "Error while loading", poster: "Error while loading image." });
             }
-            arrSeries.forEach((item)=>{
-                item.poster = "Error while loading image.";
+            arrSeries.forEach((item) => {
+                item.poster = props.errMsg;
             })
             setSeries(arrSeries);
-        } else{
-            fetch("https://gist.githubusercontent.com/josejbocanegra/c55d86de9e0dae79e3308d95e78f997f/raw/a467415350e87c13faf9c8e843ea2fd20df056f3/series-es.json")
-            .then(result => result.json())
-            .then((result) => {
-                Object.keys(result).forEach((key) => {
-                    localStorage.setItem(`series ${key}`, JSON.stringify(result[key]));
-                    setSeries(series => [...series, result[key]]);
-                    setState(state => [...state, false]);
+        } else {
+            fetch(props.lang)
+                .then(result => result.json())
+                .then((result) => {
+                    Object.keys(result).forEach((key) => {
+                        localStorage.setItem(`series ${key}`, JSON.stringify(result[key]));
+                        setSeries(series => [...series, result[key]]);
+                        setState(state => [...state, false]);
+                    })
                 })
-            })
         }
     }, []);
 
@@ -58,11 +65,11 @@ const Series = () => {
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Name</th>
-                        <th>Channel</th>
-                        <th>Seasons</th>
-                        <th>Episodes</th>
-                        <th>Release Date</th>
+                        <th><FormattedMessage id="Name" /></th>
+                        <th><FormattedMessage id="Channel" /></th>
+                        <th><FormattedMessage id="Seasons" /></th>
+                        <th><FormattedMessage id="Episodes" /></th>
+                        <th><FormattedMessage id="ReleaseDate" /></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,16 +78,31 @@ const Series = () => {
                             <td>{item.id}</td>
                             <td>{item.name}</td>
                             <td>{item.channel}</td>
-                            <td>{item.seasons}</td>
-                            <td>{item.episodes}</td>
-                            <td>{item.release}</td>
+                            <td>
+                                <FormattedNumber
+                                    value={item.seasons}
+                                />
+                            </td>
+                            <td>
+                                <FormattedNumber
+                                    value={item.episodes}
+                                />
+                            </td>
+                            <td>
+                                <FormattedDate
+                                    value={convert(item.release)}
+                                    year="numeric"
+                                    month="long"
+                                    day="numeric"
+                                />
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </Table>
             {
                 series.map((item) => (
-                    state[item.id] && <Serie key={item.id} it = {item}/>
+                    state[item.id] && <Serie key={item.id} it={item} errMsg= {props.errMsg} />
                 ))
             }
         </>
