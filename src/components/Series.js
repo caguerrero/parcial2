@@ -157,6 +157,7 @@ const Series = (props) => {
     return (
         <>
             <h1><FormattedMessage id="Title" /></h1>
+            <hr/>
             <Table bordered striped hover style={{ width: "40rem" }}>
                 <thead>
                     <tr>
