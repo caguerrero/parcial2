@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Table} from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import Serie from './Serie';
 import * as d3 from 'd3';
 import { FormattedDate, FormattedNumber, FormattedMessage } from 'react-intl';
@@ -53,11 +53,13 @@ const Series = (props) => {
             fetch(props.lang)
                 .then(result => result.json())
                 .then((result) => {
+                    let aux = []
                     Object.keys(result).forEach((key) => {
                         localStorage.setItem(`series ${key}`, JSON.stringify(result[key]));
-                        setSeries(series => [...series, result[key]]);
+                        aux.push(result[key])
                         setState(state => [...state, false]);
                     })
+                    setSeries(aux);
                 })
         }
     }, [props.errMsg, props.lang]);
@@ -149,7 +151,7 @@ const Series = (props) => {
                     return d.name;
                 });
         };
-        if (series.length === 6) {
+        if (series.length > 0) {
             chart();
         }
     }, [series])
@@ -157,7 +159,7 @@ const Series = (props) => {
     return (
         <>
             <h1><FormattedMessage id="Title" /></h1>
-            <hr/>
+            <hr />
             <Table bordered striped hover style={{ width: "40rem" }}>
                 <thead>
                     <tr>
